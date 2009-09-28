@@ -1,10 +1,10 @@
-package Net-Zuora;
+package Net::Zuora;
 use strict;
 use warnings;
 
 =head1 NAME
 
-Net-Zuora - 
+Net::Zuora - 
 
 =cut
 
