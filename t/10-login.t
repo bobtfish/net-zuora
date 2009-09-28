@@ -14,8 +14,12 @@ unless ($TestConfig::LIVE) {
 use Net::Zuora;
 use TestConfig;
 
-my $z = Net::Zuora->new(username => $TestConfig::API_USERNAME, password => $TestConfig::API_PASSWORD);
+my $z = Net::Zuora->new(
+    username => $TestConfig::API_USERNAME,
+    password => $TestConfig::API_PASSWORD
+);
 ok $z->session_id;
+ok length $z->session_id;
 
 done_testing();
 

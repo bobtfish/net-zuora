@@ -670,12 +670,12 @@
 				</complexContent>
 			</complexType>
 			<element name="LoginFault" type="fns:LoginFault" />
-			<complexType name="InvalidTypeFault">
+			<complexType name="InvalidType">
 				<complexContent>
 					<extension base="fns:ApiFault" />
 				</complexContent>
 			</complexType>
-			<element name="InvalidTypeFault" type="fns:InvalidTypeFault" />
+			<element name="InvalidType" type="fns:InvalidType" />
 			<complexType name="InvalidValueFault">
 				<complexContent>
 					<extension base="fns:ApiFault" />
@@ -709,8 +709,8 @@
 	<message name="LoginFault">
 		<part name="fault" element="fns:LoginFault" />
 	</message>
-	<message name="InvalidTypeFault">
-		<part name="fault" element="fns:InvalidTypeFault" />
+	<message name="InvalidType">
+		<part name="fault" element="fns:InvalidType" />
 	</message>
 	<message name="InvalidValueFault">
 		<part name="fault" element="fns:InvalidValueFault" />
@@ -786,25 +786,25 @@
 		<operation name="create">
 			<input message="zns:createRequest" />
 			<output message="zns:createResponse" />
-			<fault message="zns:InvalidTypeFault" name="InvalidTypeFault" />
+			<fault message="zns:InvalidType" name="InvalidType" />
 			<fault message="zns:UnexpectedErrorFault" name="UnexpectedErrorFault" />
 		</operation>
 		<operation name="generate">
 			<input message="zns:generateRequest" />
 			<output message="zns:generateResponse" />
-			<fault message="zns:InvalidTypeFault" name="InvalidTypeFault" />
+			<fault message="zns:InvalidType" name="InvalidType" />
 			<fault message="zns:UnexpectedErrorFault" name="UnexpectedErrorFault" />
 		</operation>
 		<operation name="update">
 			<input message="zns:updateRequest" />
 			<output message="zns:updateResponse" />
-			<fault message="zns:InvalidTypeFault" name="InvalidTypeFault" />
+			<fault message="zns:InvalidType" name="InvalidType" />
 			<fault message="zns:UnexpectedErrorFault" name="UnexpectedErrorFault" />
 		</operation>
 		<operation name="delete">
 			<input message="zns:deleteRequest" />
 			<output message="zns:deleteResponse" />
-			<fault message="zns:InvalidTypeFault" name="InvalidTypeFault" />
+			<fault message="zns:InvalidType" name="InvalidType" />
 			<fault message="zns:InvalidValueFault" name="InvalidValueFault" />
 			<fault message="zns:UnexpectedErrorFault" name="UnexpectedErrorFault" />
 		</operation>
@@ -855,7 +855,7 @@
 			<output>
 				<soap:body use="literal" />
 			</output>
-			<fault name="InvalidTypeFault">
+			<fault name="InvalidType">
 				<soap:fault name="InvalidType" use="literal" />
 			</fault>
 			<fault name="UnexpectedErrorFault">
@@ -871,7 +871,7 @@
 			<output>
 				<soap:body use="literal" />
 			</output>
-			<fault name="InvalidTypeFault">
+			<fault name="InvalidType">
 				<soap:fault name="InvalidType" use="literal" />
 			</fault>
 			<fault name="UnexpectedErrorFault">
@@ -887,7 +887,7 @@
 			<output>
 				<soap:body use="literal" />
 			</output>
-			<fault name="InvalidTypeFault">
+			<fault name="InvalidType">
 				<soap:fault name="InvalidType" use="literal" />
 			</fault>
 			<fault name="UnexpectedErrorFault">
@@ -922,8 +922,8 @@
 			<output>
 				<soap:body use="literal" />
 			</output>
-			<fault name="InvalidTypeFault">
-				<soap:fault name="InvalidTypeFault" use="literal" />
+			<fault name="InvalidType">
+				<soap:fault name="InvalidType" use="literal" />
 			</fault>
 			<fault name="InvalidValueFault">
 				<soap:fault name="InvalidValueFault" use="literal" />

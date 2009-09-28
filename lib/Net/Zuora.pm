@@ -4,9 +4,8 @@ use File::ShareDir qw/module_dir/;
 use MooseX::Types::Moose qw/Object/;
 use MooseX::Types::Common::String qw/NonEmptySimpleStr/;
 use MooseX::Types::Path::Class;
-use XML::Compile::WSDL11;
-use XML::Compile::SOAP11;
-use XML::Compile::Transport::SOAPHTTP;
+use SOAP::Lite +trace => [qw/transport debug/];
+BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
 use namespace::autoclean;
@@ -18,7 +17,7 @@ has wsdl_file => (
     default => sub { file( module_dir(ref shift), 'zuora.11.0.wsdl' ) },
 );
 
-has _xmlC => (
+has _soap => (
     is => 'ro',
     isa => Object,
     lazy_build => 1,
@@ -36,14 +35,15 @@ has password => (
     required => 1,
 );
 
-sub _build__xmlC {
+sub _build__soap {
     my ($self) = @_;
-    XML::Compile::WSDL11->new( $self->wsdl_file );
+    my $s = SOAP::Lite->service( "file://" . $self->wsdl_file->absolute )->proxy('https://www.zuora.com/apps/services/a/11.0');
+    return $s;
 }
 
 sub BUILD {
     my ($self) = @_;
-    $self->_xmlC;
+    $self->_soap;
 }
 
 has session_id => (
@@ -55,13 +55,39 @@ has session_id => (
 
 sub _do_login {
     my ($self) = @_;
-    my $login_method = $self->_xmlC->compileClient('login');
-    my ($res, $fault) = $login_method->(
-        username => $self->username,
-        password => $self->password
+    print $self->_soap;
+    my $un = SOAP::Data->name('zns:username', $self->username);
+    my $pw = SOAP::Data->name('zns:password', $self->password);
+    my $res = $self->_soap->call(SOAP::Data->name('login')->attr({'xmlns:zns' => 'http://api.zuora.com/'}), $un, $pw);
+    return $res->result->{Session}
+        or die(Dumper($res->fault));
+}
+
+sub test_do_insert {
+    my ($self) = @_;
+    my $session_id = $self->session_id;
+    use Data::Dumper;
+    local $Data::Dumper::Maxdepth = 10;
+#    warn Dumper($self->_xmlC->{index});
+    my $res = $self->_soap->call(
+        SOAP::Header->name('zns:SessionHeader', \SOAP::Data->name('zns:session' => $self->session_id))->attr({
+            'xmlns:zns' => 'http://api.zuora.com/',
+            'SOAP-ENV:mustUnderstand' => '0',
+        }),
+        SOAP::Data->name('zns:create')->attr({
+            'xmlns:zns' => 'http://api.zuora.com/',
+        }),
+        SOAP::Data->name('zns:zObjects', \SOAP::Data->value(
+                    SOAP::Data->name('objns:Name', 'foo'),
+                    SOAP::Data->name('objns:Currency', 'usd'),
+                    SOAP::Data->name('objns:BillCycleDay', '1'),
+                    SOAP::Data->name('objns:Status', 'Draft'),
+        ))->attr({
+            'xmlns:objns' => 'http://object.api.zuora.com/',
+            'xsi:type' => 'objns:Account',
+        })
     );
-    return $res->{parameters}{result}{Session}
-        or die(Dumper($fault));
+    warn "MOO";
 }
 
 =head1 NAME
