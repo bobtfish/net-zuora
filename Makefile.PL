@@ -7,6 +7,45 @@ if ($Module::Install::AUTHOR) {
     require Module::Install::AuthorRequires;
 }
 
+use FindBin qw/$Bin/;
+
+my $TEST_CONFIG_FN = "$Bin/t/lib/TestConfig.pm";
+
+eval { require $TEST_CONFIG_FN; };
+
+my $livetests  = prompt("Run live tests (needs username/password): ",
+    $TestConfig::LIVE || 'n');
+
+no warnings 'once';
+my ($username, $password) = ('', '');
+if ($livetests && $livetests =~ /y/i) {
+    $livetests = 1;
+    $username = prompt("API username: ",
+        $TestConfig::API_USERNAME || '' );
+    $password = prompt("API password: :",
+        $TestConfig::API_PASSWORD || '' );
+}
+else {
+    $livetests = 0;
+}
+
+my $out_fh;
+open($out_fh, '>', $TEST_CONFIG_FN)
+    or die("Could not open output file $TEST_CONFIG_FN");
+
+print $out_fh qq{
+package TestConfig;
+use strict;
+use warnings;
+
+our \$LIVE = $livetests;
+our \$API_USERNAME = '$username';
+our \$API_PASSWORD = '$password';
+
+1;
+};
+close($out_fh);
+
 name 'Net-Zuora';
 all_from 'lib/Net/Zuora.pm';
 
