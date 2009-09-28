@@ -20,6 +20,8 @@ requires 'XML::Compile::SOAP' => '2.08';
 
 test_requires 'Test::More';
 
+author_tests 't/author';
+
 if ($Module::Install::AUTHOR) {
     system("pod2text lib/Net/Zuora.pm > README")
         and die("Could not generate README");
