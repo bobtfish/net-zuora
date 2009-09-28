@@ -14,11 +14,13 @@ requires 'Moose';
 requires 'Moose::Autobox';
 requires 'MooseX::Types';
 requires 'MooseX::Types::Common';
+requires 'MooseX::Types::Path::Class';
 requires 'namespace::autoclean';
+requires 'File::ShareDir';
 requires 'XML::Compile' => '1.07';
 requires 'XML::Compile::SOAP' => '2.08';
 
-test_requires 'Test::More';
+test_requires 'Test::More' => '0.88';
 
 author_tests 't/author';
 
