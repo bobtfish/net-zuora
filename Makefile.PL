@@ -61,6 +61,8 @@ requires 'XML::Compile::SOAP' => '2.08';
 
 test_requires 'Test::More' => '0.88';
 
+author_requires 'Test::Pod::Coverage' => '1.04';
+author_requires 'Test::Pod' => '1.14';
 author_tests 't/author';
 
 if ($Module::Install::AUTHOR) {
