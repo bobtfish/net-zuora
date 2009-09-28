@@ -14,7 +14,7 @@ my $TEST_CONFIG_FN = "$Bin/t/lib/TestConfig.pm";
 eval { require $TEST_CONFIG_FN; };
 
 my $livetests  = prompt("Run live tests (needs username/password): ",
-    $TestConfig::LIVE || 'n');
+    ($TestConfig::LIVE ? 'Yes' : 'No') || 'No');
 
 no warnings 'once';
 my ($username, $password) = ('', '');
