@@ -1,5 +1,6 @@
 package Net::Zuora;
 use Moose;
+use MooseX::StrictConstructor;
 use File::ShareDir qw/module_dir/;
 use MooseX::Types::Moose qw/Object/;
 use MooseX::Types::Common::String qw/NonEmptySimpleStr/;
@@ -9,6 +10,21 @@ BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
 use namespace::autoclean;
+
+BEGIN { # If we are in a persistent environment (e.g. mod_perl)
+        # then detect this (if prefork is installed) and preload
+        # everything.
+    if (
+        eval { require prefork }
+        && $prefork::FORKING
+        && eval { require Module::Pluggable::Object }
+    ) {
+        Class::MOP::load_class($_)
+            for Module::Pluggable::Object->new(
+                search_path => ['Net::Zuora'],
+            )->plugins;
+    }
+}
 
 has wsdl_file => (
     is => 'ro',
@@ -37,13 +53,16 @@ has password => (
 
 sub _build__soap {
     my ($self) = @_;
-    my $s = SOAP::Lite->service( "file://" . $self->wsdl_file->absolute )->proxy('https://www.zuora.com/apps/services/a/11.0');
+    my $s = SOAP::Lite->service(
+        "file://" . $self->wsdl_file->absolute
+    )->proxy('https://www.zuora.com/apps/services/a/11.0');
     return $s;
 }
 
 sub BUILD {
     my ($self) = @_;
-    $self->_soap;
+    $self->session_id; # Login on construction so that we throw an
+                       # exception straight away if credentials are wrong.
 }
 
 has session_id => (
@@ -55,35 +74,57 @@ has session_id => (
 
 sub _do_login {
     my ($self) = @_;
-    my $un = SOAP::Data->name('zns:username', $self->username);
-    my $pw = SOAP::Data->name('zns:password', $self->password);
-    my $res = $self->_soap->call(SOAP::Data->name('login')->attr({'xmlns:zns' => 'http://api.zuora.com/'}), $un, $pw);
+    my $res = $self->_soap->call(
+        SOAP::Data->name('login')->attr({
+            'xmlns:zns' => 'http://api.zuora.com/'}),
+            SOAP::Data->name('zns:username', $self->username),
+            SOAP::Data->name('zns:password', $self->password),
+    );
     return $res->result->{Session}
         or die(Dumper($res->fault));
 }
 
-sub test_do_insert {
+sub new_object {
+    my ($self, $type, %p) = @_;
+    my $class = "Net::Zuora::$type";
+    Class::MOP::load_class($class);
+    $class->new(%p, _api => $self);
+}
+
+sub _soap_headers {
     my ($self) = @_;
-    my $session_id = $self->session_id;
-    my $res = $self->_soap->call(
-        SOAP::Header->name('zns:SessionHeader', \SOAP::Data->name('zns:session' => $self->session_id))->attr({
+    SOAP::Header->name('zns:SessionHeader', \SOAP::Data->name('zns:session' => $self->session_id))->attr({
             'xmlns:zns' => 'http://api.zuora.com/',
             'SOAP-ENV:mustUnderstand' => '0',
-        }),
+    })
+}
+
+sub _do_create {
+    my ($self, $object) = @_;
+    my $ob_type = ref($object) || confess;
+    $ob_type =~ s/.*:://;
+
+    my @ob_data =
+        map { SOAP::Data->name("objns:$_", $object->$_()) }
+        grep { ! /^_/ }
+        map { $_->name }
+        $object->meta->get_all_attributes;
+
+    my $res = $self->_soap->call(
+        $self->_soap_headers,
         SOAP::Data->name('zns:create')->attr({
             'xmlns:zns' => 'http://api.zuora.com/',
         }),
         SOAP::Data->name('zns:zObjects', \SOAP::Data->value(
-                    SOAP::Data->name('objns:Name', 'foo'),
-                    SOAP::Data->name('objns:Currency', 'usd'),
-                    SOAP::Data->name('objns:BillCycleDay', '1'),
-                    SOAP::Data->name('objns:Status', 'Draft'),
+            @ob_data
         ))->attr({
             'xmlns:objns' => 'http://object.api.zuora.com/',
-            'xsi:type' => 'objns:Account',
+            'xsi:type' => 'objns:' . $ob_type,
         })
     );
-    warn "MOO";
+    Carp::confess(Dumper($res->fault)) if $res->fault;
+    die($res->result) unless $res->result->{Success} eq 'true';
+    return 1;
 }
 
 =head1 NAME
@@ -93,7 +134,10 @@ Net::Zuora - SOAP::Lite wrapper around the Zuora Z-Billing API
 =head1 SYNOPSIS
 
     use Net::Zuora;
-    my $z = Net::Zuora->new;
+    my $z = Net::Zuora->new(
+        usename => 'MyAPIUserName',
+        password => 'MyAPIPassword',
+    );
 
 =head1 DESCRIPTION
 
