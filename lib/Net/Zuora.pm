@@ -11,6 +11,9 @@ use Path::Class qw/file/;
 use Data::Dumper;
 use namespace::autoclean;
 
+our $VERSION = '0.000000_01';
+$VERSION = eval $VERSION;
+
 BEGIN { # If we are in a persistent environment (e.g. mod_perl)
         # then detect this (if prefork is installed) and preload
         # everything.

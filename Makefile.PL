@@ -1,6 +1,7 @@
 use inc::Module::Install 0.91;
 use strict;
 use warnings;
+no warnings 'once';
 
 if ($Module::Install::AUTHOR) {
     require Module::Install::AuthorTests;
@@ -57,7 +58,7 @@ requires 'MooseX::Types::Path::Class';
 requires 'namespace::autoclean';
 requires 'File::ShareDir';
 requires 'Path::Class';
-requires 'SOAP::Lite' => '0.710.09';
+requires 'SOAP::Lite' => '0.69';
 
 test_requires 'Test::More' => '0.88'; # done_testing
 

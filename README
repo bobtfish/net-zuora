@@ -3,7 +3,10 @@ NAME
 
 SYNOPSIS
         use Net::Zuora;
-        my $z = Net::Zuora->new;
+        my $z = Net::Zuora->new(
+            usename => 'MyAPIUserName',
+            password => 'MyAPIPassword',
+        );
 
 DESCRIPTION
     Perl wrapper around SOAP::Lite to interface with the Zuora Z-Billing API
