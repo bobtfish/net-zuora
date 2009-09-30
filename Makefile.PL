@@ -50,19 +50,21 @@ name 'Net-Zuora';
 all_from 'lib/Net/Zuora.pm';
 
 requires 'Moose';
-requires 'Moose::Autobox';
+#requires 'Moose::Autobox';
 requires 'MooseX::Types';
 requires 'MooseX::Types::Common';
 requires 'MooseX::Types::Path::Class';
 requires 'namespace::autoclean';
 requires 'File::ShareDir';
-requires 'XML::Compile' => '1.07';
-requires 'XML::Compile::SOAP' => '2.08';
+requires 'Path::Class';
+requires 'SOAP::Lite' => '0.710.09';
 
-test_requires 'Test::More' => '0.88';
+test_requires 'Test::More' => '0.88'; # done_testing
 
 author_requires 'Test::Pod::Coverage' => '1.04';
 author_requires 'Test::Pod' => '1.14';
+author_requires 'Test::NoTabs';
+author_requires 'Test::EOL';
 author_tests 't/author';
 
 if ($Module::Install::AUTHOR) {
