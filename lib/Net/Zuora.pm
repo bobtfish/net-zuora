@@ -4,7 +4,7 @@ use File::ShareDir qw/module_dir/;
 use MooseX::Types::Moose qw/Object/;
 use MooseX::Types::Common::String qw/NonEmptySimpleStr/;
 use MooseX::Types::Path::Class;
-use SOAP::Lite +trace => [qw/transport debug/];
+use SOAP::Lite; # +trace => [qw/transport debug/];
 BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
@@ -55,7 +55,6 @@ has session_id => (
 
 sub _do_login {
     my ($self) = @_;
-    print $self->_soap;
     my $un = SOAP::Data->name('zns:username', $self->username);
     my $pw = SOAP::Data->name('zns:password', $self->password);
     my $res = $self->_soap->call(SOAP::Data->name('login')->attr({'xmlns:zns' => 'http://api.zuora.com/'}), $un, $pw);
@@ -66,9 +65,6 @@ sub _do_login {
 sub test_do_insert {
     my ($self) = @_;
     my $session_id = $self->session_id;
-    use Data::Dumper;
-    local $Data::Dumper::Maxdepth = 10;
-#    warn Dumper($self->_xmlC->{index});
     my $res = $self->_soap->call(
         SOAP::Header->name('zns:SessionHeader', \SOAP::Data->name('zns:session' => $self->session_id))->attr({
             'xmlns:zns' => 'http://api.zuora.com/',
