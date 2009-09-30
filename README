@@ -1,3 +1,29 @@
 NAME
-    Net::Zuora -
+    Net::Zuora - SOAP::Lite wrapper around the Zuora Z-Billing API
+
+SYNOPSIS
+        use Net::Zuora;
+        my $z = Net::Zuora->new;
+
+DESCRIPTION
+    Perl wrapper around SOAP::Lite to interface with the Zuora Z-Billing API
+    (<http://www.zuora.com>)
+
+METHODS
+BUGS
+    Plenty, along with missing features.
+
+    Code is available on github from:
+    <http://github.com/bobtfish/net-zuora>. Patches are welcome.
+
+AUTHOR
+    Tomas Doran (t0m) "<t0m@state51.co.uk>"
+
+COPYRIGHT & LICENSE
+    All perl code is Copyright (c) 2009 state51 and is licensed under the
+    same terms as perl itself.
+
+    The .wsdl file distributed with this distribution is Copyright (c) Zuora
+    and is free to distribute unmodified as long as this copyright notice is
+    maintained.
 
