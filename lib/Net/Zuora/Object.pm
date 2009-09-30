@@ -1,10 +1,12 @@
 package Net::Zuora::Object;
 use Moose::Role;
-use MooseX::Types::Moose qw/Bool/;
+use MooseX::Types::Moose qw/Bool Str/;
 use namespace::autoclean;
 
 has _api => ( isa => 'Net::Zuora', is => 'ro', required => 1, weak_ref => 1 );
 has _created => ( isa => Bool, default => 0, is => 'ro' );
+
+has Id => ( isa => Str, is => 'ro', predicate => 'has_Id' );
 
 sub create {
     my ($self) = @_;

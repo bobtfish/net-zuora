@@ -9,6 +9,7 @@ use SOAP::Lite; # +trace => [qw/transport debug/];
 BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
+use Net::Zuora::QueryIterator;
 use namespace::autoclean;
 
 our $VERSION = '0.000000_01';
@@ -87,11 +88,38 @@ sub _do_login {
         or die(Dumper($res->fault));
 }
 
-sub new_object {
-    my ($self, $type, %p) = @_;
+sub _load_object_class {
+    my ($self, $type) = @_;
     my $class = "Net::Zuora::$type";
     Class::MOP::load_class($class);
+    return $class;
+}
+
+sub new_object {
+    my ($self, $type, %p) = @_;
+    my $class = $self->_load_object_class($type);
     $class->new(%p, _api => $self);
+}
+
+sub query_objects {
+    my ($self, $type, %p) = @_;
+    my $class = $self->_load_object_class($type);
+    my $query_string = "select " . join(', ', $self->_get_public_attribute_names($class)) . " from $type";
+    if (scalar(keys %p)) {
+        $query_string .= " WHERE "
+            . join(" AND ", map { $_ . "= '" . $p{$_} . "'" } keys %p);
+    }
+
+    my $res = $self->_soap->call(
+        $self->_soap_headers,
+        SOAP::Data->name('zns:query')->attr({
+            'xmlns:zns' => 'http://api.zuora.com/',
+        }),
+        SOAP::Data->name('zns:queryString', $query_string)
+    );
+    Carp::confess(Dumper($res->fault)) if $res->fault;
+    die(Dumper($res->result)) unless $res->result->{done} eq 'true';
+    return Net::Zuora::QueryIterator->new(_api => $self, records => $res->result->{records}, type => $type);
 }
 
 sub _soap_headers {
@@ -102,6 +130,13 @@ sub _soap_headers {
     })
 }
 
+sub _get_public_attribute_names {
+    my ($self, $class) = @_;
+    grep { ! /^_/ }
+    map { $_->name }
+    $class->meta->get_all_attributes;
+}
+
 sub _do_create {
     my ($self, $object) = @_;
     my $ob_type = ref($object) || confess;
@@ -109,9 +144,7 @@ sub _do_create {
 
     my @ob_data =
         map { SOAP::Data->name("objns:$_", $object->$_()) }
-        grep { ! /^_/ }
-        map { $_->name }
-        $object->meta->get_all_attributes;
+        $self->_get_public_attribute_names($object);
 
     my $res = $self->_soap->call(
         $self->_soap_headers,
