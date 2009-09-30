@@ -92,7 +92,39 @@ sub test_do_insert {
 
 =head1 NAME
 
-Net::Zuora - 
+Net::Zuora - SOAP::Lite wrapper around the Zuora Z-Billing API
+
+=head1 SYNOPSIS
+
+    use Net::Zuora;
+    my $z = Net::Zuora->new;
+
+=head1 DESCRIPTION
+
+Perl wrapper around L<SOAP::Lite> to interface with the Zuora Z-Billing API
+(L<http://www.zuora.com>)
+
+=head1 METHODS
+
+=head1 BUGS
+
+Plenty, along with missing features.
+
+Code is available on github from: L<http://github.com/bobtfish/net-zuora>.
+Patches are welcome.
+
+=head1 AUTHOR
+
+Tomas Doran (t0m) C<< <t0m@state51.co.uk> >>
+
+=head1 COPYRIGHT & LICENSE
+
+All perl code is Copyright (c) 2009 state51 and is licensed under the same
+terms as perl itself.
+
+The .wsdl file distributed with this distribution is Copyright (c) Zuora
+and is free to distribute unmodified as long as this copyright notice
+is maintained.
 
 =cut
 
