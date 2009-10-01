@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright Zuora, Inc. 2007 - 2009 All Rights Reserved -->
+<!-- This file may be freely distributed without modification -->
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
 	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
