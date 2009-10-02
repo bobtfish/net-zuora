@@ -4,7 +4,15 @@ use MooseX::Types::Moose qw/ArrayRef Str/;
 use namespace::autoclean;
 
 has _api => ( is => 'ro', isa => 'Net::Zuora', required => 1 );
-has _records => ( isa => ArrayRef, is => 'ro', required => 1, init_arg => 'records', traits => ['Array'], handles => { next => 'shift', all => 'elements' } );
+has _records => (
+    isa => ArrayRef, is => 'ro', required => 1, init_arg => 'records',
+    traits => ['Array'],
+    handles => {
+        next => 'shift',
+        all => 'elements',
+        is_empty => 'is_empty',
+    },
+);
 has type => ( isa => Str, is => 'ro', required => 1 );
 
 override BUILDARGS => sub {
