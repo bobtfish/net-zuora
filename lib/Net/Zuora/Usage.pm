@@ -2,6 +2,7 @@ package Net::Zuora::Usage;
 use Moose;
 use MooseX::StrictConstructor;
 use MooseX::Types::Moose qw/Str Int/;
+use MooseX::Types::ISO8601 qw/ISO8601DateTimeStr/;
 use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 
@@ -24,7 +25,10 @@ has RbeStatus => ( isa => 'RbeStatus', is => 'ro', default => 'Pending' );
 has UOM => ( isa => Str, is => 'ro' );
 
 foreach my $field_name (qw/ StartDateTime SubmissionDateTime EndDateTime /) {
-    has $field_name => ( isa => Str, is => 'ro', required => 1 );
+    has $field_name => (
+        isa => ISO8601DateTimeStr, is => 'ro', required => 1,
+        coerce => 1,
+    );
 }
 
 1;

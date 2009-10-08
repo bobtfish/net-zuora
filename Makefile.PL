@@ -55,6 +55,7 @@ requires 'Moose';
 requires 'MooseX::Types';
 requires 'MooseX::Types::Common';
 requires 'MooseX::Types::Path::Class';
+requires 'MooseX::Types::ISO8601' => '0.02';
 requires 'namespace::autoclean';
 requires 'File::ShareDir';
 requires 'Path::Class';
