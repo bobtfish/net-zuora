@@ -56,11 +56,9 @@ has password => (
 );
 
 sub _build__soap {
-    my ($self) = @_;
-    my $s = SOAP::Lite->service(
-        "file://" . $self->wsdl_file->absolute
+    SOAP::Lite->service(
+        "file://" . shift->wsdl_file->absolute
     )->proxy('https://www.zuora.com/apps/services/a/11.0');
-    return $s;
 }
 
 sub BUILD {
@@ -123,13 +121,16 @@ sub query_objects {
 }
 
 sub _soap_headers {
-    my ($self) = @_;
-    SOAP::Header->name('zns:SessionHeader', \SOAP::Data->name('zns:session' => $self->session_id))->attr({
+    SOAP::Header->name(
+        'zns:SessionHeader'
+        => \SOAP::Data->name('zns:session' => shift->session_id)
+    )->attr({
             'xmlns:zns' => 'http://api.zuora.com/',
             'SOAP-ENV:mustUnderstand' => '0',
     })
 }
 
+# FIXME - support attr trait or something..
 sub _get_public_attribute_names {
     my ($self, $class) = @_;
     grep { ! /^_/ }
@@ -137,8 +138,15 @@ sub _get_public_attribute_names {
     $class->meta->get_all_attributes;
 }
 
-sub _do_create {
-    my ($self, $object) = @_;
+foreach my $type (qw/ create update /) {
+    __PACKAGE__->meta->add_method( "_do_$type" => sub {
+            my $self = shift;
+            $self->_do_create_or_update($type, @_);
+    });
+}
+
+sub _do_create_or_update {
+    my ($self, $type, $object) = @_;
     my $ob_type = ref($object) || confess;
     $ob_type =~ s/.*:://;
 
@@ -148,14 +156,14 @@ sub _do_create {
 
     my $res = $self->_soap->call(
         $self->_soap_headers,
-        SOAP::Data->name('zns:create')->attr({
+        SOAP::Data->name("zns:$type")->attr({
             'xmlns:zns' => 'http://api.zuora.com/',
         }),
         SOAP::Data->name('zns:zObjects', \SOAP::Data->value(
             @ob_data
         ))->attr({
             'xmlns:objns' => 'http://object.api.zuora.com/',
-            'xsi:type' => 'objns:' . $ob_type,
+            'xsi:type' => "objns:$ob_type",
         })
     );
     Carp::confess(Dumper($res->fault)) if $res->fault;
