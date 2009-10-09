@@ -7,7 +7,7 @@ use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 
 with qw/
-    Net::Zuora::Object
+    Net::Zuora::ZObject
 /;
 
 subtype 'RbeStatus', as Str, where { /^Pending|Processed$/ };

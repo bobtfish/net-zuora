@@ -4,7 +4,7 @@ use MooseX::StrictConstructor;
 use namespace::autoclean;
 
 with qw/
-    Net::Zuora::Object
+    Net::Zuora::ZObject
 /;
 
 1;

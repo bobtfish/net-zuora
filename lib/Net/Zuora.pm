@@ -83,7 +83,8 @@ sub _do_login {
             SOAP::Data->name('zns:password', $self->password),
     );
     return $res->result->{Session}
-        or die(Dumper($res->fault));
+        if $res->result;
+    die("Could not login, fault detail: " . Dumper($res->fault));
 }
 
 sub _load_object_class {

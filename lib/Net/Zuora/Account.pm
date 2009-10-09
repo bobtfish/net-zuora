@@ -6,7 +6,7 @@ use Net::Zuora::Types qw/AccountStatus/;
 use namespace::autoclean;
 
 with qw/
-    Net::Zuora::Object
+    Net::Zuora::ZObject
 /;
 
 has Name => ( isa => Str, is => 'ro', predicate => 'has_Name' );

@@ -1,4 +1,4 @@
-package Net::Zuora::Object;
+package Net::Zuora::ZObject;
 use Moose::Role;
 use MooseX::Types::Moose qw/Bool Str/;
 use namespace::autoclean;
