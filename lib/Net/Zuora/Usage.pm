@@ -16,7 +16,7 @@ has Quantity => ( isa => Int, is => 'ro', required => 1 );
 
 has AccountNumber => ( isa => Str, is => 'ro', required => 1 );
 
-has SourceName => ( isa => Str, is => 'ro', required => 1 );
+has SourceName => ( isa => Str, is => 'ro' );
 
 has ChargeNumber => ( isa => Str, is => 'ro', predicate => 'has_ChargeNumber' );
 

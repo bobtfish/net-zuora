@@ -15,7 +15,7 @@ has AccountNumber => ( isa => Str, is => 'ro', predicate => 'has_AccountNumber' 
 
 has Balance => ( isa => Num, is => 'ro', predicate => 'has_Balance' );
 
-has Status => ( isa => AccountStatus, is => 'ro', default => 'Draft' );
+has Status => ( isa => AccountStatus, is => 'rw', default => 'Draft' );
 
 has Currency => ( isa => Str, is => 'ro', default => 'gbp' );
 

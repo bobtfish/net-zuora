@@ -62,6 +62,7 @@ requires 'Path::Class';
 requires 'SOAP::Lite' => '0.69';
 
 test_requires 'Test::More' => '0.88'; # done_testing
+test_requires 'DateTime';
 
 author_requires 'Test::Pod::Coverage' => '1.04';
 author_requires 'Test::Pod' => '1.14';
