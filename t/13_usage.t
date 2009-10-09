@@ -32,7 +32,9 @@ my $account = do {
 ok $account;
 isa_ok $account, 'Net::Zuora::Account';
 $account->Status('Active');
-$account->update;
+eval { $account->update };
+ok !$@, 'No exception updating account'
+    or warn Dumper($@);
 
 my $now = DateTime->now;
 my $week_ago = DateTime->from_epoch( epoch => time()-(60*60*24*7) );
@@ -44,16 +46,10 @@ my $use = $z->new_object(
         StartDateTime => $week_ago,
         SubmissionDateTime => $now,
 );
-warn("Here");
 my $res = eval { $use->create };
 ok $res;
-ok !$@;
-warn($@) if $@;
-use Data::Dumper;
-local $Data::Dumper::Maxdepth = 3;
-warn Data::Dumper::Dumper($@);
-
-ok 1;
+ok !$@
+    or warn(Dumper($@));
 
 done_testing;
 

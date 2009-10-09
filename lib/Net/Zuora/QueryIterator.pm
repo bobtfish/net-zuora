@@ -21,7 +21,13 @@ override BUILDARGS => sub {
     $args->{records} ||= [];
     $args->{records} = [ $args->{records} ] if ref($args->{records}) ne 'ARRAY';
     $args->{records} = [
-        map { $class_to_inflate->new(%$_, _api => $args->{_api}) }
+        map {
+            $class_to_inflate->new(
+                %$_,
+                _api => $args->{_api},
+                _created => 1,
+            )
+        }
         @{ $args->{records} }
     ];
     return $args;
