@@ -1,11 +1,6 @@
 package Net::Zuora::Invoice;
-use Moose;
-use MooseX::StrictConstructor;
+use Net::Zuora::ZObject;
 use namespace::autoclean;
-
-with qw/
-    Net::Zuora::ZObject
-/;
 
 1;
 

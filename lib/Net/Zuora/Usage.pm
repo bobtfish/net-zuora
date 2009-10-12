@@ -1,14 +1,9 @@
 package Net::Zuora::Usage;
-use Moose;
-use MooseX::StrictConstructor;
+use Net::Zuora::ZObject;
 use MooseX::Types::Moose qw/Str Int/;
 use MooseX::Types::ISO8601 qw/ISO8601DateTimeStr/;
 use Moose::Util::TypeConstraints;
 use namespace::autoclean;
-
-with qw/
-    Net::Zuora::ZObject
-/;
 
 subtype 'RbeStatus', as Str, where { /^Pending|Processed$/ };
 

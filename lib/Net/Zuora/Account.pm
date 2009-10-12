@@ -1,25 +1,20 @@
 package Net::Zuora::Account;
-use Moose;
-use MooseX::StrictConstructor;
+use Net::Zuora::ZObject;
 use MooseX::Types::Moose qw/Str Num Int/;
 use Net::Zuora::Types qw/AccountStatus/;
 use namespace::autoclean;
 
-with qw/
-    Net::Zuora::ZObject
-/;
+has Name => ( isa => Str, is => 'ro', predicate => 'has_Name', index => 17 );
 
-has Name => ( isa => Str, is => 'ro', predicate => 'has_Name' );
+has AccountNumber => ( isa => Str, is => 'ro', predicate => 'has_AccountNumber', index => 1 );
 
-has AccountNumber => ( isa => Str, is => 'ro', predicate => 'has_AccountNumber' );
+has Balance => ( isa => Num, is => 'ro', predicate => 'has_Balance', index => 5);
 
-has Balance => ( isa => Num, is => 'ro', predicate => 'has_Balance' );
+has Status => ( isa => AccountStatus, is => 'rw', default => 'Draft', index => 23 );
 
-has Status => ( isa => AccountStatus, is => 'rw', default => 'Draft' );
+has Currency => ( isa => Str, is => 'ro', default => 'gbp', index => 11, );
 
-has Currency => ( isa => Str, is => 'ro', default => 'gbp' );
-
-has BillCycleDay => ( isa => Int, is => 'ro', default => 1 );
+has BillCycleDay => ( isa => Int, is => 'ro', default => 1, index => 7 );
 
 1;
 

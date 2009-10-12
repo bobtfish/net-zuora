@@ -3,9 +3,11 @@ use Moose;
 use MooseX::StrictConstructor;
 use File::ShareDir qw/module_dir/;
 use MooseX::Types::Moose qw/Object/;
+use Net::Zuora::Types qw/CreateOrUpdate/;
+use MooseX::Lexical::Types qw/Object CreateOrUpdate/;
 use MooseX::Types::Common::String qw/NonEmptySimpleStr/;
 use MooseX::Types::Path::Class;
-use SOAP::Lite; # +trace => [qw/transport debug/];
+use SOAP::Lite +trace => [qw/transport debug/];
 BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
@@ -139,6 +141,15 @@ sub _get_public_attribute_names {
     $class->meta->get_all_attributes;
 }
 
+sub _get_updateable_attribute_names {
+    my ($self, $class) = @_;
+    grep {
+        $_ eq 'Id' or
+        $class->meta->find_attribute_by_name($_)->has_write_method
+    }
+    $self->_get_public_attribute_names($class);
+}
+
 foreach my $type (qw/ create update /) {
     __PACKAGE__->meta->add_method( "_do_$type" => sub {
             my $self = shift;
@@ -147,13 +158,19 @@ foreach my $type (qw/ create update /) {
 }
 
 sub _do_create_or_update {
-    my ($self, $type, $object) = @_;
-    my $ob_type = ref($object) || confess;
+    my $self = shift;
+    my CreateOrUpdate $type = shift;
+    my Object $object = shift;
+
+    my $ob_type = ref($object);
     $ob_type =~ s/.*:://;
 
+    my $get_attr_names_method
+        = ($type eq 'create' ? '_get_public_attribute_names'
+                             : '_get_updateable_attribute_names' );
     my @ob_data =
         map { SOAP::Data->name("objns:$_", $object->$_()) }
-        $self->_get_public_attribute_names($object);
+        $self->$get_attr_names_method($object);
 
     my $res = $self->_soap->call(
         $self->_soap_headers,

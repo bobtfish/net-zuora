@@ -1,28 +1,37 @@
 package Net::Zuora::ZObject;
-use Moose::Role;
-use MooseX::Types::Moose qw/Bool Str/;
-use namespace::autoclean;
+use strict;
+use warnings;
+use Moose ();
+use Moose::Exporter;
 
-has _api => ( isa => 'Net::Zuora', is => 'ro', required => 1, weak_ref => 1 );
-has _created => ( isa => Bool, default => 0, is => 'ro' );
+Moose::Exporter->setup_import_methods(
+    also => 'Moose',
+);
 
-has Id => ( isa => Str, is => 'ro', predicate => 'has_Id' );
-
-sub create {
-    my ($self) = @_;
-    Carp::confess("Object $self already exists in Zuora system")
-        if $self->_created;
-    my $res = $self->_api->_do_create($self);
-    # Force write to ro attribute via MOP.
-    $self->meta->get_attribute('_created')->set_value($self, 1);
-    return $res;
-}
-
-sub update {
-    my ($self) = @_;
-    Carp::confess("Object $self does not exist in Zuora system")
-        unless $self->_created;
-    $self->_api->_do_update($self);
+sub init_meta {
+    shift;
+    my %options = @_;
+    Moose->init_meta( %options );
+    Moose::Util::MetaRole::apply_metaclass_roles(
+        for_class => $options{for_class},
+        attribute_metaclass_roles => [
+            'Net::Zuora::ZObject::AttributeRole',
+        ],
+        metaclass_roles => [qw/
+            Net::Zuora::ZObject::MetaClassRole
+        /],
+        constructor_class_roles => [qw/
+            MooseX::StrictConstructor::Role::Meta::Method::Constructor
+        /],
+    );
+    Moose::Util::MetaRole::apply_base_class_roles(
+        for_class => $options{for_class},
+        roles     => [qw/
+            MooseX::StrictConstructor::Role::Object
+            Net::Zuora::ZObject::Role
+        /],
+    );
+    return $options{for_class}->meta;
 }
 
 1;
