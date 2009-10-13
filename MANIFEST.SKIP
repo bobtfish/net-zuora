@@ -1,3 +1,6 @@
+MANIFEST.SKIP
+t/lib/TestConfig.pm
+.gitignore
 .git/
 blib
 pm_to_blib
