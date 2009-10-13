@@ -12,12 +12,24 @@ DESCRIPTION
     Perl wrapper around SOAP::Lite to interface with the Zuora Z-Billing API
     (<http://www.zuora.com>)
 
+NOTE
+    THIS CODE IS INCOMPLETE - it does not currently support all the features
+    of the Zuora API, and is not currently being developed.
+
+    It is here as a guide/starting point for someone looking to implement a
+    wrapper to Zuora's API in perl.
+
 METHODS
 BUGS
-    Plenty, along with missing features.
+    Plenty, along with missing features. This module was implemented whilst
+    we were evaluating the Zuora solution, however it is in no way feature
+    complete, but I thought I should share it to give the next person coming
+    to this problem a useful base to start from.
 
     Code is available on github from:
-    <http://github.com/bobtfish/net-zuora>. Patches are welcome.
+    <http://github.com/bobtfish/net-zuora>.
+
+    Patches (and taking over this project entirely) welcome.
 
 AUTHOR
     Tomas Doran (t0m) "<t0m@state51.co.uk>"

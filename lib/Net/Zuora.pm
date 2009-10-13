@@ -7,7 +7,7 @@ use Net::Zuora::Types qw/CreateOrUpdate/;
 use MooseX::Lexical::Types qw/Object CreateOrUpdate/;
 use MooseX::Types::Common::String qw/NonEmptySimpleStr/;
 use MooseX::Types::Path::Class;
-use SOAP::Lite +trace => [qw/transport debug/];
+use SOAP::Lite; # +trace => [qw/transport debug/];
 BEGIN { $SOAP::Constants::PREFIX_ENV = 'SOAP-ENV'; }
 use Path::Class qw/file/;
 use Data::Dumper;
@@ -206,14 +206,26 @@ Net::Zuora - SOAP::Lite wrapper around the Zuora Z-Billing API
 Perl wrapper around L<SOAP::Lite> to interface with the Zuora Z-Billing API
 (L<http://www.zuora.com>)
 
+=head1 NOTE
+
+B<THIS CODE IS INCOMPLETE> - it does not currently support all the features
+of the Zuora API, and is not currently being developed.
+
+It is here as a guide/starting point for someone looking to implement a
+wrapper to Zuora's API in perl.
+
 =head1 METHODS
 
 =head1 BUGS
 
-Plenty, along with missing features.
+Plenty, along with missing features. This module was implemented whilst
+we were evaluating the Zuora solution, however it is in no way feature complete,
+but I thought I should share it to give the next person coming to this
+problem a useful base to start from.
 
 Code is available on github from: L<http://github.com/bobtfish/net-zuora>.
-Patches are welcome.
+
+Patches (and taking over this project entirely) welcome.
 
 =head1 AUTHOR
 
